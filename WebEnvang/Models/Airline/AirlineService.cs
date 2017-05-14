@@ -9,29 +9,46 @@ namespace WebEnvang.Models.Airline
 {
     public class AirlineService : BaseService
     {
+        private readonly ApplicationDbContext ctx = null;
+        public AirlineService()
+        {
+            ctx = new ApplicationDbContext();
+        }
         public async Task<dynamic> GetList()
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_airline_getlist")).Tables[0];
-            return (from r in dt.AsEnumerable()
-                    select new
-                    {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name"),
-                        Code = r.Field<object>("Code")
-                    }).ToList();
+            return await (from e in ctx.Airlines
+                          where e.IsDeleted == false
+                          select e).ToListTask();
         }
-        public Task Save(AirlineDTO dto, string userId, string IP)
+        public async Task Save(Airline dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_airline_save",
-                new string[] { "@id", "@name", "code", "@userid", "@ip" },
-                new object[] { dto.Id, dto.Name, dto.Code, userId, IP });
+            var entry = await (from e in ctx.Airlines
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry == null)
+            {
+                entry = new Airline();
+                ctx.Airlines.Add(entry);
+            }
+            entry.Name = dto.Name;
+            entry.Code = dto.Code;
+            entry.UserId = userId;
+            entry.IP = IP;
+            await ctx.SaveChangesAsync();
         }
 
-        public Task Delete(AirlineDTO dto, string userId, string IP)
+        public async Task Delete(Airline dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_airline_delete",
-                new string[] { "@id", "@userid", "@ip" },
-                new object[] { dto.Id, userId, IP });
+            var entry = await (from e in ctx.Airlines
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry != null)
+            {
+                entry.IsDeleted = true;
+                entry.UserId = userId;
+                entry.IP = IP;
+                await ctx.SaveChangesAsync();
+            }
         }
     }
 }

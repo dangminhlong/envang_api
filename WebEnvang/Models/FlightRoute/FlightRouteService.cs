@@ -9,19 +9,53 @@ namespace WebEnvang.Models.FlightRoute
 {
     public class FlightRouteService : BaseService
     {
-        public Task SaveRouteInfo(FlightRouteDTO dto, string userId, string IP)
+        private readonly ApplicationDbContext ctx = null;
+        public FlightRouteService()
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Value", typeof(int));
-            dto.DestIdList.ForEach((id) =>
+            ctx = new ApplicationDbContext();
+        }
+        public async Task SaveRouteInfo(FlightRouteDTO dto, string userId, string IP)
+        {
+            var frList = (from e in ctx.FlightRoutes
+                          where e.SrcLocationId == dto.SourceId || e.DestLocationId == dto.SourceId
+                          select e).ToList();
+            frList.ForEach(fr =>
             {
-                var row = dt.NewRow();
-                row["Value"] = id;
-                dt.Rows.Add(row);
+                bool bRoute = false;
+                foreach (int id in dto.DestIdList)
+                {
+                    if (id == fr.SrcLocationId || id == fr.DestLocationId)
+                    {
+                        bRoute = true;
+                        break;
+                    }
+                }
+                if (!bRoute)
+                {
+                    ctx.FlightRoutes.Remove(fr);
+                }
             });
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_flightroute_save",
-                new string[] { "@sourceId", "@destTable", "@userid", "@ip" },
-                new object[] { dto.SourceId, dt, userId, IP });
+
+            dto.DestIdList.ForEach(id =>
+            {
+                var entry = frList.Where(fr => fr.SrcLocationId == dto.SourceId && fr.DestLocationId == id).FirstOrDefault();
+                if (entry == null)
+                {
+                    var entry1 = new FlightRoute
+                    {
+                        SrcLocationId = dto.SourceId,
+                        DestLocationId = id
+                    };
+                    var entry2 = new FlightRoute
+                    {
+                        SrcLocationId = id,
+                        DestLocationId = dto.SourceId
+                    };
+                    ctx.FlightRoutes.Add(entry1);
+                    ctx.FlightRoutes.Add(entry2);
+                }
+            });
+            await ctx.SaveChangesAsync();
         }
     }
 }

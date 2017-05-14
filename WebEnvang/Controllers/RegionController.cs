@@ -25,7 +25,7 @@ namespace WebEnvang.Controllers
             return await RegionService.GetList();
         }
         [HttpPost]
-        public async Task<dynamic> Save([FromBody]RegionDTO dto)
+        public async Task<dynamic> Save([FromBody]Region dto)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace WebEnvang.Controllers
             }
         }
         [HttpPost]
-        public async Task<dynamic> Remove([FromBody]RegionDTO dto)
+        public async Task<dynamic> Remove([FromBody]Region dto)
         {
             try
             {

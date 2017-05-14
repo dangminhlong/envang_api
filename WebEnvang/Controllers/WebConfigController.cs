@@ -23,7 +23,7 @@ namespace WebEnvang.Controllers
         {
             return await this.WebConfigService.Get();
         }
-        public async Task<dynamic> Post([FromBody]WebConfigDTO dto)
+        public async Task<dynamic> Post([FromBody]WebConfig dto)
         {
             try
             {

@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
+using WebEnvang.Models.General;
+using System.Data.Entity;
+
 
 namespace WebEnvang.Models
 {
@@ -31,5 +34,20 @@ namespace WebEnvang.Models
         {
             return new ApplicationDbContext();
         }
+
+        public DbSet<GeneralInformation> GeneralInformations { get; set; }
+        public DbSet<Page> Pages { get; set; }
+        public DbSet<PageRole> PageRoles { get; set; }
+        public DbSet<WebConfig.WebConfig> WebConfigs { get; set; }
+        public DbSet<FeatureArticleConfigGroup.FeatureArticleConfigGroup> FeatureArticleConfigGroups { get; set; }
+        public DbSet<Region.Region> Regions { get; set; }
+        public DbSet<Location.Location> Locations { get; set; }
+        public DbSet<FlightRoute.FlightRoute> FlightRoutes { get; set; }
+        public DbSet<ArticleTypes.ArticleType> ArticleTypes { get; set; }
+        public DbSet<Article.Article> Articles { get; set; }
+        public DbSet<FeatureArticleConfig.FeatureArticleConfig> FeatureArticleConfigs { get; set; }
+        public DbSet<Airline.Airline> Airlines { get; set; }
+        public DbSet<LuggagePrice.LuggagePrice> LuggagePrices { get; set; }
+        public DbSet<Province.Province> Provinces { get; set; }
     }
 }

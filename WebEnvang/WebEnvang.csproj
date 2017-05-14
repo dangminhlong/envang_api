@@ -257,11 +257,13 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ProvinceController.cs" />
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\FeatureArticleConfigController.cs" />
     <Compile Include="Controllers\FileManagerController.cs" />
     <Compile Include="Controllers\FlightApiController.cs" />
     <Compile Include="Controllers\FlightRouteController.cs" />
+    <Compile Include="Controllers\GeneralController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\ArticleTypeController.cs" />
@@ -276,21 +278,64 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201703181750478_InitialCreate.cs" />
-    <Compile Include="Migrations\201703181750478_InitialCreate.Designer.cs">
-      <DependentUpon>201703181750478_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\201705140657551_StartUp.cs" />
+    <Compile Include="Migrations\201705140657551_StartUp.Designer.cs">
+      <DependentUpon>201705140657551_StartUp.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201703190530307_ApplicationUser.cs" />
-    <Compile Include="Migrations\201703190530307_ApplicationUser.Designer.cs">
-      <DependentUpon>201703190530307_ApplicationUser.cs</DependentUpon>
+    <Compile Include="Migrations\201705140804198_PR.cs" />
+    <Compile Include="Migrations\201705140804198_PR.Designer.cs">
+      <DependentUpon>201705140804198_PR.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705140930268_WC.cs" />
+    <Compile Include="Migrations\201705140930268_WC.Designer.cs">
+      <DependentUpon>201705140930268_WC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705140950045_FGC.cs" />
+    <Compile Include="Migrations\201705140950045_FGC.Designer.cs">
+      <DependentUpon>201705140950045_FGC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705141015396_RL.cs" />
+    <Compile Include="Migrations\201705141015396_RL.Designer.cs">
+      <DependentUpon>201705141015396_RL.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705141046458_FR.cs" />
+    <Compile Include="Migrations\201705141046458_FR.Designer.cs">
+      <DependentUpon>201705141046458_FR.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705141121148_AT.cs" />
+    <Compile Include="Migrations\201705141121148_AT.Designer.cs">
+      <DependentUpon>201705141121148_AT.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705141143545_A.cs" />
+    <Compile Include="Migrations\201705141143545_A.Designer.cs">
+      <DependentUpon>201705141143545_A.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705141304468_FAC.cs" />
+    <Compile Include="Migrations\201705141304468_FAC.Designer.cs">
+      <DependentUpon>201705141304468_FAC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705141341533_APB.cs" />
+    <Compile Include="Migrations\201705141341533_APB.Designer.cs">
+      <DependentUpon>201705141341533_APB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Article\Article.cs" />
     <Compile Include="Models\BookApi\BookResult.cs" />
-    <Compile Include="Models\Province\ProvinceDTO.cs" />
+    <Compile Include="Models\EnvietFlightScrape\EvScrapeModel.cs" />
+    <Compile Include="Models\EnvietFlightScrape\EvScrapeService.cs" />
+    <Compile Include="Models\EnvietFlightScrape\SearchFlightInfo.cs" />
+    <Compile Include="Models\EnvietFlightScrape\SearchFlightResult.cs" />
+    <Compile Include="Models\FlightRoute\FlightRoute.cs" />
+    <Compile Include="Models\Location\Location.cs" />
+    <Compile Include="Models\Page.cs" />
+    <Compile Include="Models\General\GeneralInformation.cs" />
+    <Compile Include="Models\General\GeneralService.cs" />
+    <Compile Include="Models\PageRole.cs" />
+    <Compile Include="Models\Province\Province.cs" />
     <Compile Include="Models\Province\ProvinceService.cs" />
-    <Compile Include="Models\ArticleTypes\ArticleTypeDTO.cs" />
+    <Compile Include="Models\ArticleTypes\ArticleType.cs" />
     <Compile Include="Models\ArticleTypes\ArticleTypeService.cs" />
     <Compile Include="Models\Article\ArticleDTO.cs" />
     <Compile Include="Models\Article\ArticleService.cs" />
@@ -304,9 +349,9 @@
     <Compile Include="Models\BookApi\Contact.cs" />
     <Compile Include="Models\BookApi\FindFlight.cs" />
     <Compile Include="Models\BookApi\Passenger.cs" />
-    <Compile Include="Models\FeatureArticleConfig\FeatureArticleConfigDTO.cs" />
+    <Compile Include="Models\FeatureArticleConfig\FeatureArticleConfig.cs" />
     <Compile Include="Models\FeatureArticleConfig\FeatureArticleConfigService.cs" />
-    <Compile Include="Models\FeatureArticleConfigGroup\FeatureArticleConfigGroupDTO.cs" />
+    <Compile Include="Models\FeatureArticleConfigGroup\FeatureArticleConfigGroup.cs" />
     <Compile Include="Models\FeatureArticleConfigGroup\FeatureArticleConfigGroupService.cs" />
     <Compile Include="Models\FlightRoute\FlightRouteDTO.cs" />
     <Compile Include="Models\FlightRoute\FlightRouteService.cs" />
@@ -314,17 +359,18 @@
     <Compile Include="Models\Location\LocationService.cs" />
     <Compile Include="Models\MsSqlHelper.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\Airline\AirlineDTO.cs" />
+    <Compile Include="Models\Airline\Airline.cs" />
     <Compile Include="Models\Airline\AirlineService.cs" />
-    <Compile Include="Models\LuggagePrice\LuggagePriceDTO.cs" />
+    <Compile Include="Models\LuggagePrice\LuggagePrice.cs" />
     <Compile Include="Models\LuggagePrice\LuggagePriceService.cs" />
-    <Compile Include="Models\Region\RegionDTO.cs" />
+    <Compile Include="Models\Region\Region.cs" />
     <Compile Include="Models\Region\RegionService.cs" />
     <Compile Include="Models\Roles\RoleDTO.cs" />
     <Compile Include="Models\Roles\RoleService.cs" />
-    <Compile Include="Models\StringHelper.cs" />
+    <Compile Include="Models\Extentions.cs" />
     <Compile Include="Models\Users\UserDTO.cs" />
     <Compile Include="Models\Users\UserService.cs" />
+    <Compile Include="Models\WebConfig\WebConfig.cs" />
     <Compile Include="Models\WebConfig\WebConfigDTO.cs" />
     <Compile Include="Models\WebConfig\WebConfigService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -432,11 +478,35 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201703181750478_InitialCreate.resx">
-      <DependentUpon>201703181750478_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201705140657551_StartUp.resx">
+      <DependentUpon>201705140657551_StartUp.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703190530307_ApplicationUser.resx">
-      <DependentUpon>201703190530307_ApplicationUser.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201705140804198_PR.resx">
+      <DependentUpon>201705140804198_PR.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705140930268_WC.resx">
+      <DependentUpon>201705140930268_WC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705140950045_FGC.resx">
+      <DependentUpon>201705140950045_FGC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705141015396_RL.resx">
+      <DependentUpon>201705141015396_RL.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705141046458_FR.resx">
+      <DependentUpon>201705141046458_FR.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705141121148_AT.resx">
+      <DependentUpon>201705141121148_AT.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705141143545_A.resx">
+      <DependentUpon>201705141143545_A.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705141304468_FAC.resx">
+      <DependentUpon>201705141304468_FAC.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705141341533_APB.resx">
+      <DependentUpon>201705141341533_APB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

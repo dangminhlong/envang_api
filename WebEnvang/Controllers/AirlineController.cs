@@ -25,7 +25,7 @@ namespace WebEnvang.Controllers
             return await AirlineService.GetList();
         }
         [HttpPost]
-        public async Task<dynamic> Save([FromBody]AirlineDTO dto)
+        public async Task<dynamic> Save([FromBody]Airline dto)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace WebEnvang.Controllers
             }
         }
         [HttpPost]
-        public async Task<dynamic> Remove([FromBody]AirlineDTO dto)
+        public async Task<dynamic> Remove([FromBody]Airline dto)
         {
             try
             {

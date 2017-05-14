@@ -9,93 +9,84 @@ namespace WebEnvang.Models.Article
 {
     public class ArticleService : BaseService
     {
+        private readonly ApplicationDbContext ctx = null;
+        public ArticleService()
+        {
+            ctx = new ApplicationDbContext();
+        }
         public async Task<dynamic> GetList(ArticleDTO dto)
         {
-            DataSet ds = await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_article_getlist",
-                new string[] { "@articletypeid", "@page", "@pageSize" },
-                new object[] { dto.ArticleTypeId, dto.Page, dto.PageSize });
+            var tong = (from e in ctx.Articles
+                         where e.ArticleTypeId == dto.ArticleTypeId
+                         select e).Count();
+            var query = (from e in ctx.Articles
+                         where e.ArticleTypeId == dto.ArticleTypeId
+                         orderby e.CreatedOn descending
+                         select e).Skip((dto.Page - 1) * dto.PageSize).Take(dto.PageSize);
             return new
             {
-                Data = (from r in ds.Tables[0].AsEnumerable()
-                        select new
-                        {
-                            Id = r.Field<object>("Id"),
-                            Name = r.Field<object>("Name"),
-                            Description = r.Field<object>("Description"),
-                            ArticleTypeId = r.Field<object>("ArticleTypeId"),
-                            Content = r.Field<object>("Content"),
-                            ImageUrl = r.Field<object>("ImageUrl")
-                        }).ToList(),
-                Tong = Convert.ToInt32(ds.Tables[1].Rows[0][0])
+                Data = await query.ToListTask(),
+                Tong = tong
             };
         }
         public async Task<dynamic> GetItem(ArticleDTO dto)
         {
-            DataTable dt = await MsSqlHelper.ExecuteDataTableTask(ConnectionString, "sp_article_get",
-                new string[] { "@id" },
-                new object[] { dto.Id });
-            return (from r in dt.AsEnumerable()
-                    select new
-                    {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name"),
-                        Description = r.Field<object>("Description"),
-                        ArticleTypeId = r.Field<object>("ArticleTypeId"),
-                        Content = r.Field<object>("Content"),
-                        ImageUrl = r.Field<object>("ImageUrl"),
-                        CreatedOn = r.Field<object>("CreatedOn")
-                    }).FirstOrDefault();
+            var query = (from e in ctx.Articles
+                         where e.Id == dto.Id
+                         select e);
+            return await query.FirstOrDefaultTask();
         }
 
         public async Task<dynamic> GetLatest()
         {
-            DataTable dt = await MsSqlHelper.ExecuteDataTableTask(ConnectionString, "sp_article_getlatest");
-            return (from r in dt.AsEnumerable()
-                    select new
-                    {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name"),
-                        FriendlyName = (r.Field<string>("Name")).GenerateSlug(),
-                        Description = r.Field<object>("Description"),
-                        ImageUrl = r.Field<object>("ImageUrl"),
-                        CreatedOn = r.Field<object>("CreatedOn")
-                    }).FirstOrDefault();
+            var query = (from e in ctx.Articles
+                         orderby e.CreatedOn descending
+                         select e);
+            return await query.FirstOrDefaultTask();
         }
 
         public async Task<dynamic> GetListView(int page, int pageSize)
         {
-            DataSet ds = await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_article_getlist_view",
-                new string[] { "@page", "@pageSize" },
-                new object[] { page, pageSize });
-
+            var tong = (from e in ctx.Articles
+                        select e).Count();
+            var query = (from e in ctx.Articles
+                         orderby e.CreatedOn descending
+                         select e).Skip((page - 1) * pageSize).Take(pageSize);
             return new
             {
-                Data = (from r in ds.Tables[0].AsEnumerable()
-                        select new
-                        {
-                            Id = r.Field<object>("Id"),
-                            Name = r.Field<object>("Name"),
-                            FriendlyName = (r.Field<string>("Name")).GenerateSlug(),
-                            Description = r.Field<object>("Description"),
-                            ImageUrl = r.Field<object>("ImageUrl"),
-                            CreatedOn = r.Field<object>("CreatedOn")
-                        }).ToList(),
-                TotalItems = Convert.ToInt32(ds.Tables[1].Rows[0][0])
-            };
+                Data = await query.ToListTask(),
+                TotalItems = tong
+            };            
         }
 
-        public Task Save(ArticleDTO dto, string userId, string IP)
+        public async Task Save(ArticleDTO dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_article_save",
-                new string[] { "@id", "@name", "@description", "@content", "@imgurl", "@articletypeid", "@userid", "@ip" },
-                new object[] { dto.Id, dto.Name, dto.Description, dto.Content, dto.ImageUrl, dto.ArticleTypeId, userId, IP });
+            var entry = await (from e in ctx.Articles
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry == null)
+            {
+                entry = new Article();
+                entry.CreatedBy = userId;
+                entry.CreatedOn = DateTime.Now;
+                ctx.Articles.Add(entry);
+            }
+            entry.ModifiedBy = userId;
+            entry.ModifiedOn = DateTime.Now;
+            entry.Copy(dto);
+            await ctx.SaveChangesAsync();
         }
 
-        public Task Delete(ArticleDTO dto, string userId, string IP)
+        public async Task Delete(ArticleDTO dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_article_delete",
-                new string[] { "@id", "@userid", "@ip" },
-                new object[] { dto.Id, userId, IP });
+            var entry = await (from e in ctx.Articles
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry != null)
+            {
+                ctx.Articles.Remove(entry);
+                await ctx.SaveChangesAsync();
+            }
         }
     }
 }

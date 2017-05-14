@@ -9,28 +9,41 @@ namespace WebEnvang.Models.ArticleTypes
 {
     public class ArticleTypeService : BaseService
     {
+        private readonly ApplicationDbContext ctx = null;
+        public ArticleTypeService()
+        {
+            ctx = new ApplicationDbContext();
+        }
         public async Task<dynamic> GetList()
         {
-            DataTable dt = await MsSqlHelper.ExecuteDataTableTask(ConnectionString, "sp_articletype_getlist");
-            return (from r in dt.AsEnumerable()
-                    select new
-                    {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name")
-                    }).ToList();
+            var query = (from e in ctx.ArticleTypes
+                         select e);
+            return await query.ToListTask();
         }
-        public Task Save(ArticleTypeDTO dto, string userId, string IP)
+        public async Task Save(ArticleType dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_articletype_save",
-                new string[] { "@id", "@name", "@userid", "@ip" },
-                new object[] { dto.Id, dto.Name, userId, IP });
+            var entry = await (from e in ctx.ArticleTypes
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry == null)
+            {
+                entry = new ArticleType();
+                ctx.ArticleTypes.Add(entry);
+            }
+            entry.Name = dto.Name;
+            await ctx.SaveChangesAsync();
         }
 
-        public Task Delete(ArticleTypeDTO dto, string userId, string IP)
+        public async Task Delete(ArticleType dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_articletype_delete",
-                new string[] { "@id", "@userid", "@ip" },
-                new object[] { dto.Id, userId, IP });
+            var entry = await (from e in ctx.ArticleTypes
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry != null)
+            {
+                ctx.ArticleTypes.Remove(entry);
+                await ctx.SaveChangesAsync();
+            }
         }
     }
 }

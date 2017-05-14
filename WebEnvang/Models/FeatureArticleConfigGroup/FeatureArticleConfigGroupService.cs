@@ -9,30 +9,45 @@ namespace WebEnvang.Models.FeatureArticleConfigGroup
 {
     public class FeatureArticleConfigGroupService : BaseService
     {
+        private readonly ApplicationDbContext ctx = null;
+        public FeatureArticleConfigGroupService()
+        {
+            ctx = new ApplicationDbContext();
+        }
         public async Task<dynamic> GetList()
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_featurearticleconfiggroup_getlist")).Tables[0];
-            return (from r in dt.AsEnumerable()
-                    select new
-                    {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name"),
-                        FriendlyName = r.Field<object>("FriendlyName"),
-                        Order = r.Field<object>("Order")
-                    }).ToList();
+
+            return await (from r in ctx.FeatureArticleConfigGroups
+                    select r).ToListTask();
         }
-        public Task Save(FeatureArticleConfigGroupDTO dto, string userId, string IP)
+        public Task Save(FeatureArticleConfigGroup dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_featurearticleconfiggroup_save",
-                new string[] { "@id", "@name", "@friendlyname", "@order", "@userid", "@ip" },
-                new object[] { dto.Id, dto.Name, dto.FriendlyName, dto.Order, userId, IP });
+            var entry = (from r in ctx.FeatureArticleConfigGroups
+                         where r.Id == dto.Id
+                         select r).FirstOrDefault();
+            if (entry == null)
+            {
+                entry = new FeatureArticleConfigGroup();
+                entry.Copy(dto);
+                ctx.FeatureArticleConfigGroups.Add(entry);
+            }
+            else
+            {
+                entry.Copy(dto);
+            }
+            return ctx.SaveChangesAsync();
         }
 
-        public Task Delete(FeatureArticleConfigGroupDTO dto, string userId, string IP)
+        public async Task Delete(FeatureArticleConfigGroup dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_featurearticleconfiggroup_delete",
-                new string[] { "@id", "@userid", "@ip" },
-                new object[] { dto.Id, userId, IP });
+            var entry = (from r in ctx.FeatureArticleConfigGroups
+                         where r.Id == dto.Id
+                         select r).FirstOrDefault();
+            if (entry != null)
+            {
+                ctx.FeatureArticleConfigGroups.Remove(entry);
+                await ctx.SaveChangesAsync();
+            }
         }
     }
 }

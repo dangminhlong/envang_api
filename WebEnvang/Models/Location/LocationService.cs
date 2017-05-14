@@ -9,159 +9,127 @@ namespace WebEnvang.Models.Location
 {
     public class LocationService : BaseService
     {
+        private readonly ApplicationDbContext ctx = null;
+        public LocationService()
+        {
+            ctx = new ApplicationDbContext();
+        }
         public async Task<dynamic> GetList(LocationDTO dto)
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_location_getlist", 
-                new string[] { "@regionId" },
-                new object[] { dto.RegionId })).Tables[0];
-            return (from r in dt.AsEnumerable()
-                    select new
-                    {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name"),
-                        Code = r.Field<object>("Code"),
-                        ApiPlaceId = r.Field<object>("ApiPlaceId"),
-                        RegionId = r.Field<object>("RegionId"),
-                        RegionName = r.Field<object>("RegionName"),
-                        Order = r.Field<object>("Order"),
-                        RegionColumn = r.Field<object>("RegionColumn"),
-                        RegionOrder = r.Field<object>("RegionOrder")
-                    }).ToList();
+            var query = (from l in ctx.Locations
+                         join r in ctx.Regions on l.RegionId equals r.Id
+                         where l.RegionId == dto.RegionId
+                         select new
+                         {
+                             Id = l.Id,
+                             Name = l.Name,
+                             Code = l.Code,
+                             RegionId = l.RegionId,
+                             RegionName = r.Name,
+                             Order = l.Order,
+                             RegionColumn = r.Column,
+                             RegionOrder = r.Order
+                         });
+            return await query.ToListTask();
         }
 
         public async Task<dynamic> GetListAndGroup()
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_location_getlist",
-                new string[] { "@regionId" },
-                new object[] { 0 })).Tables[0];
-
-            var regionList = (
-                from r in dt.AsEnumerable()
-                orderby r.Field<int>("RegionColumn"), r.Field<int>("RegionOrder")
-                select new LocationDTO
-                {
-                    RegionId = r.Field<int>("RegionId"),
-                    RegionColumn = r.Field<int>("RegionColumn"),
-                    RegionOrder = r.Field<int>("RegionOrder"),
-                    RegionName = r.Field<string>("RegionName")
-                }).Distinct<LocationDTO>(new RegionComparer()).ToList();
-
-
-            return (from region in regionList
-                    select new
-                    {
-                        RegionId = region.RegionId,
-                        RegionColumn = region.RegionColumn,
-                        RegionOrder = region.RegionOrder,
-                        RegionName = region.RegionName,
-                        LocationList = (
-                            from r in dt.AsEnumerable()
-                            where r.Field<int>("RegionId") == region.RegionId
-                            orderby r.Field<int>("Order")
-                            select new
-                            {
-                                Id = r.Field<object>("Id"),
-                                Name = r.Field<object>("Name"),
-                                Code = r.Field<object>("Code"),
-                                ApiPlaceId = r.Field<object>("ApiPlaceId")
-                            }
-                        )
-                    }).ToList();
+            var query = (from r in ctx.Regions
+                         select new
+                         {
+                             RegionId = r.Id,
+                             RegionColumn = r.Column,
+                             RegionOrder = r.Order,
+                             RegionName = r.Name,
+                             LocationList = (from l in ctx.Locations
+                                             where l.RegionId == r.Id
+                                             select new
+                                             {
+                                                 Id = l.Id,
+                                                 Name = l.Name,
+                                                 Code = l.Code
+                                             }).ToList()
+                         });
+            return await query.ToListTask();
         }
 
         public async Task<dynamic> GetListDestLocationAndGroup(int sourceId)
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_flightroute_getlist",
-                new string[] { "@sourceId" },
-                new object[] { sourceId })).Tables[0];
-
-            var regionList = (
-                from r in dt.AsEnumerable()
-                orderby r.Field<int>("RegionColumn"), r.Field<int>("RegionOrder")
-                select new LocationDTO
-                {
-                    RegionId = r.Field<int>("RegionId"),
-                    RegionColumn = r.Field<int>("RegionColumn"),
-                    RegionOrder = r.Field<int>("RegionOrder"),
-                    RegionName = r.Field<string>("RegionName")
-                }).Distinct<LocationDTO>(new RegionComparer()).ToList();
-
-
-            return (from region in regionList
-                    select new
-                    {
-                        RegionId = region.RegionId,
-                        RegionColumn = region.RegionColumn,
-                        RegionOrder = region.RegionOrder,
-                        RegionName = region.RegionName,
-                        LocationList = (
-                            from r in dt.AsEnumerable()
-                            where r.Field<int>("RegionId") == region.RegionId
-                            orderby r.Field<int>("Order")
-                            select new
-                            {
-                                Id = r.Field<object>("Id"),
-                                Name = r.Field<object>("Name"),
-                                Code = r.Field<object>("Code"),
-                                ApiPlaceId = r.Field<object>("ApiPlaceId"),
-                                Routed = r.Field<object>("Routed")
-                            }
-                        )
-                    }).ToList();
+            var query = (from r in ctx.Regions
+                         where r.Id != sourceId
+                         select new
+                         {
+                             RegionId = r.Id,
+                             RegionColumn = r.Column,
+                             RegionOrder = r.Order,
+                             RegionName = r.Name,
+                             LocationList = (from l in ctx.Locations
+                                             where l.RegionId == r.Id
+                                             let isRouted = (from fr in ctx.FlightRoutes
+                                                             where fr.SrcLocationId == sourceId && fr.DestLocationId == l.Id
+                                                             select fr).Any()
+                                             select new
+                                             {
+                                                 Id = l.Id,
+                                                 Name = l.Name,
+                                                 Code = l.Code,
+                                                 Routed = isRouted
+                                             }).ToList()
+                         });
+            return await query.ToListTask();
         }
 
         public async Task<dynamic> GetListDestLocationRoutedAndGroup(int sourceId)
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_flightroute_getlist_routed",
-                new string[] { "@sourceId" },
-                new object[] { sourceId })).Tables[0];
-
-            var regionList = (
-                from r in dt.AsEnumerable()
-                orderby r.Field<int>("RegionColumn"), r.Field<int>("RegionOrder")
-                select new LocationDTO
-                {
-                    RegionId = r.Field<int>("RegionId"),
-                    RegionColumn = r.Field<int>("RegionColumn"),
-                    RegionOrder = r.Field<int>("RegionOrder"),
-                    RegionName = r.Field<string>("RegionName")
-                }).Distinct<LocationDTO>(new RegionComparer()).ToList();
-
-
-            return (from region in regionList
-                    select new
-                    {
-                        RegionId = region.RegionId,
-                        RegionColumn = region.RegionColumn,
-                        RegionOrder = region.RegionOrder,
-                        RegionName = region.RegionName,
-                        LocationList = (
-                            from r in dt.AsEnumerable()
-                            where r.Field<int>("RegionId") == region.RegionId
-                            orderby r.Field<int>("Order")
-                            select new
-                            {
-                                Id = r.Field<object>("Id"),
-                                Name = r.Field<object>("Name"),
-                                Code = r.Field<object>("Code"),
-                                ApiPlaceId = r.Field<object>("ApiPlaceId")
-                            }
-                        )
-                    }).ToList();
+            var query = (from r in ctx.Regions
+                         where r.Id != sourceId
+                         select new
+                         {
+                             RegionId = r.Id,
+                             RegionColumn = r.Column,
+                             RegionOrder = r.Order,
+                             RegionName = r.Name,
+                             LocationList = (from l in ctx.Locations
+                                             let isRouted = (from fr in ctx.FlightRoutes
+                                                             where fr.SrcLocationId == sourceId && fr.DestLocationId == l.Id
+                                                             select fr).Any()
+                                             where l.RegionId == r.Id && isRouted == true                                             
+                                             select new
+                                             {
+                                                 Id = l.Id,
+                                                 Name = l.Name,
+                                                 Code = l.Code
+                                             }).ToList()
+                         });
+            return await query.ToListTask();
         }
 
-        public Task Save(LocationDTO dto, string userId, string IP)
+        public async Task Save(LocationDTO dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_location_save",
-                new string[] { "@id", "@name", "@code", "@apiplaceid", "@regionId", "@order", "@userid", "@ip" },
-                new object[] { dto.Id, dto.Name, dto.Code, dto.ApiPlaceId, dto.RegionId, dto.Order, userId, IP });
+            var entry = await (from e in ctx.Locations
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry == null)
+            {
+                entry = new Location();
+                ctx.Locations.Add(entry);
+            }
+            entry.Copy(dto);
+            await ctx.SaveChangesAsync();
         }
 
-        public Task Delete(LocationDTO dto, string userId, string IP)
+        public async Task Delete(LocationDTO dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_location_delete",
-                new string[] { "@id", "@userid", "@ip" },
-                new object[] { dto.Id, userId, IP });
+            var entry = await (from e in ctx.Locations
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry != null)
+            {
+                entry = new Location();
+                ctx.Locations.Remove(entry);
+                await ctx.SaveChangesAsync();
+            }
         }
     }
 }

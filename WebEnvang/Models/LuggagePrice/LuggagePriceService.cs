@@ -9,50 +9,56 @@ namespace WebEnvang.Models.LuggagePrice
 {
     public class LuggagePriceService : BaseService
     {
-        public async Task<dynamic> GetList(LuggagePriceDTO dto)
+        private readonly ApplicationDbContext ctx = null;
+        public LuggagePriceService()
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_luggageprice_getlist",
-                new string[] { "@airlineId" },
-                new object[] { dto.AirlineId })).Tables[0];
-            return (from r in dt.AsEnumerable()
-                    select new
-                    {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name"),
-                        Weight = r.Field<object>("Weight"),
-                        Price = r.Field<object>("Price"),
-                        AirlineId = r.Field<object>("AirlineId"),
-                        Order = r.Field<object>("Order")
-                    }).ToList();
+            ctx = new ApplicationDbContext();
         }
-        public async Task<dynamic> GetListByAirlineCode(LuggagePriceDTO dto)
+        public async Task<dynamic> GetList(LuggagePrice dto)
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_luggageprice_getlist_by_airline_code",
-                new string[] { "@airlineCode" },
-                new object[] { dto.AirlineCode })).Tables[0];
-            return (from r in dt.AsEnumerable()
-                    select new
-                    {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name"),
-                        Weight = r.Field<object>("Weight"),
-                        Price = r.Field<object>("Price"),
-                        AirlineId = r.Field<object>("AirlineId"),
-                        Order = r.Field<object>("Order")
-                    }).ToList();
+            var query = (from e in ctx.LuggagePrices
+                         where e.AirlineId == dto.AirlineId && e.IsDeleted == false
+                         orderby e.Weight
+                         select e);
+            return await query.ToListTask();
         }
-        public Task Save(LuggagePriceDTO dto, string userId, string IP)
+        public async Task<dynamic> GetListByAirlineCode(string code)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_luggageprice_save",
-                new string[] { "@id", "@name", "@weight", "@price", "@airlineid", "@order", "@userid", "@ip" },
-                new object[] { dto.Id, dto.Name, dto.Weight, dto.Price, dto.AirlineId, dto.Order, userId, IP });
+            var query = (from lp in ctx.LuggagePrices
+                         join ar in ctx.Airlines on lp.AirlineId equals ar.Id
+                         where ar.Code == code && lp.IsDeleted == false
+                         orderby lp.Weight
+                         select lp);
+            return await query.ToListTask();
+        }
+        public async Task Save(LuggagePrice dto, string userId, string IP)
+        {
+            var entry = await (from e in ctx.LuggagePrices
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry == null)
+            {
+                entry = new LuggagePrice();
+                ctx.LuggagePrices.Add(entry);
+            }
+            entry.Copy(dto);
+            entry.UserId = userId;
+            entry.IP = IP;
+            await ctx.SaveChangesAsync();
         }
 
-        public Task Delete(LuggagePriceDTO dto, string userId, string IP)
+        public async Task Delete(LuggagePrice dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_luggageprice_delete",
-                new string[] { "@id", "@userid", "@ip" },
-                new object[] { dto.Id, userId, IP });
+            var entry = await(from e in ctx.LuggagePrices
+                              where e.Id == dto.Id
+                              select e).FirstOrDefaultTask();
+            if (entry != null)
+            {
+                entry.IsDeleted = true;
+                entry.UserId = userId;
+                entry.IP = IP;
+                await ctx.SaveChangesAsync();
+            }
         }
     }
 }

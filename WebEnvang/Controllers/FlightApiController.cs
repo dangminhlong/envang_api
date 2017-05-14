@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using WebEnvang.Models.BookApi;
+using WebEnvang.Models.EnvietFlightScrape;
 
 namespace WebEnvang.Controllers
 {
@@ -170,6 +171,19 @@ namespace WebEnvang.Controllers
                     message = e.Message
                 };
             }
+        }
+
+        [HttpPost]
+        public async Task<dynamic> FindFlights([FromBody]FindFlight dto)
+        {
+            EvScrapeService service = new EvScrapeService(50000, 50000, 0);
+            string departureDate = dto.DepartDate.Split(new char[] { 'T' })[0];
+            string returnDate = string.Empty;
+            if (dto.RoundTrip)
+            {
+                returnDate = dto.ReturnDate.Split(new char[] { 'T' })[0];
+            }
+            return await service.SearchFlight(dto.FromPlace, dto.ToPlace, departureDate, returnDate, dto.Adult, dto.Child, dto.Infant);
         }
              
     }

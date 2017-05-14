@@ -20,12 +20,12 @@ namespace WebEnvang.Controllers
         }
         [AllowAnonymous]
         [HttpPost]
-        public async Task<dynamic> GetList([FromBody]FeatureArticleConfigDTO dto)
+        public async Task<dynamic> GetList([FromBody]FeatureArticleConfig dto)
         {
             return await FeatureArticleConfigService.GetList(dto);
         }
         [HttpPost]
-        public async Task<dynamic> Save([FromBody]FeatureArticleConfigDTO dto)
+        public async Task<dynamic> Save([FromBody]FeatureArticleConfig dto)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace WebEnvang.Controllers
             }
         }
         [HttpPost]
-        public async Task<dynamic> Remove([FromBody]FeatureArticleConfigDTO dto)
+        public async Task<dynamic> Remove([FromBody]FeatureArticleConfig dto)
         {
             try
             {

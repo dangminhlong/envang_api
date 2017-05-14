@@ -9,31 +9,41 @@ namespace WebEnvang.Models.Region
 {
     public class RegionService : BaseService
     {
+        private readonly ApplicationDbContext ctx = null;
+        public RegionService()
+        {
+            ctx = new ApplicationDbContext();
+        }
         public async Task<dynamic> GetList()
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_region_getlist")).Tables[0];
-            return (from r in dt.AsEnumerable()
-                    select new
-                    {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name"),
-                        IsDomestic = r.Field<object>("IsDomestic"),
-                        Column = r.Field<object>("Column"),
-                        Order = r.Field<object>("Order")
-                    }).ToList();
+            var query = (from e in ctx.Regions
+                         select e);
+            return await query.ToListTask();
         }
-        public Task Save(RegionDTO dto, string userId, string IP)
+        public async Task Save(Region dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_region_save",
-                new string[] { "@id", "@name", "@isdomestic", "@column", "@order", "@userid", "@ip" },
-                new object[] { dto.Id, dto.Name, dto.IsDomestic, dto.Column, dto.Order, userId, IP });
+            var entry = await (from e in ctx.Regions
+                         where e.Id == dto.Id
+                         select e).FirstOrDefaultTask();
+            if (entry == null)
+            {
+                entry = new Region();
+                ctx.Regions.Add(entry);
+            }
+            entry.Copy(dto);
+            await ctx.SaveChangesAsync();
         }
 
-        public Task Delete(RegionDTO dto, string userId, string IP)
+        public async Task Delete(Region dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_region_delete",
-                new string[] { "@id", "@userid", "@ip" },
-                new object[] { dto.Id, userId, IP });
+            var entry = await (from e in ctx.Regions
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry != null)
+            {
+                ctx.Regions.Remove(entry);
+                await ctx.SaveChangesAsync();
+            }
         }
     }
 }

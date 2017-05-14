@@ -9,30 +9,46 @@ namespace WebEnvang.Models.Province
 {
     public class ProvinceService : BaseService
     {
+        private readonly ApplicationDbContext ctx = null;
+        public ProvinceService()
+        {
+            ctx = new ApplicationDbContext();
+        }
         public async Task<dynamic> GetList()
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_province_getlist")).Tables[0];
-            return (from r in dt.AsEnumerable()
-                    select new
-                    {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name"),
-                        VietJetAirCode = r.Field<object>("VietJetAirCode"),
-                        JetStarCode = r.Field<object>("JetStarCode")
-                    }).ToList();
+            var query = (from e in ctx.Provinces
+                         where e.IsDeleted == false
+                         select e);
+            return await query.ToListTask();
         }
-        public Task Save(ProvinceDTO dto, string userId, string IP)
+        public async Task Save(Province dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_province_save",
-                new string[] { "@id", "@name", "@vietjetaircode", "@jetstarcode", "@userid", "@ip" },
-                new object[] { dto.Id, dto.Name, dto.VietJetAirCode, dto.JetStarCode, userId, IP });
+            var entry = await (from e in ctx.Provinces
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry == null)
+            {
+                entry = new Province();
+                ctx.Provinces.Add(entry);
+            }
+            entry.Name = dto.Name;
+            entry.UserId = userId;
+            entry.IP = IP;
+            await ctx.SaveChangesAsync();
         }
 
-        public Task Delete(ProvinceDTO dto, string userId, string IP)
+        public async Task Delete(Province dto, string userId, string IP)
         {
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_province_delete",
-                new string[] { "@id", "@userid", "@ip" },
-                new object[] { dto.Id, userId, IP });
+            var entry = await (from e in ctx.Provinces
+                               where e.Id == dto.Id
+                               select e).FirstOrDefaultTask();
+            if (entry != null)
+            {
+                entry.UserId = userId;
+                entry.IP = IP;
+                entry.IsDeleted = true;
+                await ctx.SaveChangesAsync();
+            }
         }
     }
 }

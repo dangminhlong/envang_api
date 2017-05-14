@@ -20,20 +20,20 @@ namespace WebEnvang.Controllers
         }
         [AllowAnonymous]
         [HttpPost]
-        public async Task<dynamic> GetList([FromBody]LuggagePriceDTO dto)
+        public async Task<dynamic> GetList([FromBody]LuggagePrice dto)
         {
             return await LuggagePriceService.GetList(dto);
         }
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<dynamic> GetListByAirlineCode([FromBody]LuggagePriceDTO dto)
+        public async Task<dynamic> GetListByAirlineCode([FromBody]string Code)
         {
-            return await LuggagePriceService.GetListByAirlineCode(dto);
+            return await LuggagePriceService.GetListByAirlineCode(Code);
         }
 
         [HttpPost]
-        public async Task<dynamic> Save([FromBody]LuggagePriceDTO dto)
+        public async Task<dynamic> Save([FromBody]LuggagePrice dto)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace WebEnvang.Controllers
             }
         }
         [HttpPost]
-        public async Task<dynamic> Remove([FromBody]LuggagePriceDTO dto)
+        public async Task<dynamic> Remove([FromBody]LuggagePrice dto)
         {
             try
             {

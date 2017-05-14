@@ -25,7 +25,7 @@ namespace WebEnvang.Controllers
             return await ArticleTypeService.GetList();
         }
         [HttpPost]
-        public async Task<dynamic> Save([FromBody]ArticleTypeDTO dto)
+        public async Task<dynamic> Save([FromBody]ArticleType dto)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace WebEnvang.Controllers
             }
         }
         [HttpPost]
-        public async Task<dynamic> Remove([FromBody]ArticleTypeDTO dto)
+        public async Task<dynamic> Remove([FromBody]ArticleType dto)
         {
             try
             {

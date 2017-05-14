@@ -9,47 +9,64 @@ namespace WebEnvang.Models.Roles
 {
     public class RoleService : BaseService
     {
-        
+        private readonly ApplicationDbContext ctx = null;
+        public RoleService()
+        {
+            ctx = new ApplicationDbContext();
+        }
         public async Task<dynamic> GetRoles()
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_role_getlist")).Tables[0];
-            return (from r in dt.AsEnumerable()
+            return await (from r in ctx.Roles
                     select new
                     {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name")
-                    }).ToList();
+                        Id = r.Id,
+                        Name = r.Name
+                    }).ToListTask();
         }
 
         public async Task<dynamic> GetPages(RoleDTO dto)
         {
-            DataTable dt = (await MsSqlHelper.ExecuteDataSetTask(ConnectionString, "sp_getlist_pages",
-                new string[] { "@roleId" },
-                new object[] { dto.RoleId })).Tables[0];
-            return (from r in dt.AsEnumerable()
-                    select new
-                    {
-                        Id = r.Field<object>("Id"),
-                        Name = r.Field<object>("Name"),
-                        RouterPath = r.Field<object>("RouterPath"),
-                        Order = r.Field<object>("Order"),
-                        HasRight = r.Field<object>("HasRight")
-                    }).ToList();
+            string roleId = dto.RoleId;
+            var query = (from p in ctx.Pages
+                         let hasRight = ( from pg in ctx.PageRoles.Where(pg=>pg.PageId == p.Id && pg.RoleId == roleId) select pg).Any()
+                         select new
+                         {
+                             Id = p.Id,
+                             Name = p.Name,
+                             RouterPath = p.RouterPath,
+                             Order = p.Order,
+                             HasRight = hasRight
+                         });
+            return await query.ToListTask();
         }
 
         public Task SavePageRoles(RoleDTO dto)
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Value", typeof(int));
-            for (int i=0; i < dto.PageIdList.Count; i++)
+            var roleId = dto.RoleId;
+            var dsPageRoles = (from pr in ctx.PageRoles
+                               where pr.RoleId == roleId
+                               select pr).ToList();
+            dsPageRoles.ForEach(pr =>
             {
-                var row = dt.NewRow();
-                row["Value"] = dto.PageIdList[i];
-                dt.Rows.Add(row);
-            }
-            return MsSqlHelper.ExecuteNonQueryTask(ConnectionString, "sp_role_save_page",
-                new string[] { "@roleId", "@table" },
-                new object[] { dto.RoleId, dt });
+                if (!dto.PageIdList.Contains(pr.PageId))
+                {
+                    ctx.PageRoles.Remove(pr);
+                }
+            });
+            var oldIdList = dsPageRoles.Select(x => x.PageId).ToList();
+            dto.PageIdList.ForEach(id =>
+            {
+                if (!oldIdList.Contains(id))
+                {
+                    var entry = new PageRole
+                    {
+                        PageId = id,
+                        RoleId = roleId
+                    };
+                    ctx.PageRoles.Add(entry);
+                }
+            });
+            return ctx.SaveChangesAsync();
         }
 
         public async Task<dynamic> GetPagesByUser(string userId)

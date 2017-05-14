@@ -25,7 +25,7 @@ namespace WebEnvang.Controllers
             return await FeatureArticleConfigGroupService.GetList();
         }
         [HttpPost]
-        public async Task<dynamic> Save([FromBody]FeatureArticleConfigGroupDTO dto)
+        public async Task<dynamic> Save([FromBody]FeatureArticleConfigGroup dto)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace WebEnvang.Controllers
             }
         }
         [HttpPost]
-        public async Task<dynamic> Remove([FromBody]FeatureArticleConfigGroupDTO dto)
+        public async Task<dynamic> Remove([FromBody]FeatureArticleConfigGroup dto)
         {
             try
             {

@@ -34,7 +34,7 @@ namespace WebEnvang.Models
         }
         public static Task<DataTable> ExecuteDataTableTask(string conString, string storeName, string[] dsParam = null, object[] dsGiatri = null)
         {
-            return Task<DataSet>.Run(() =>
+            return Task<DataTable>.Run(() =>
             {
                 return ExecuteDataTable(conString, storeName, dsParam, dsGiatri);
             });

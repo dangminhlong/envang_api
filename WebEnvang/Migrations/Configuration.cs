@@ -10,7 +10,6 @@ namespace WebEnvang.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            ContextKey = "WebEnvang.Models.ApplicationDbContext";
         }
 
         protected override void Seed(WebEnvang.Models.ApplicationDbContext context)
