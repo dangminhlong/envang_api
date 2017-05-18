@@ -257,6 +257,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\PaymentMethodController.cs" />
     <Compile Include="Controllers\ProvinceController.cs" />
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\FeatureArticleConfigController.cs" />
@@ -318,11 +319,47 @@
     <Compile Include="Migrations\201705141341533_APB.Designer.cs">
       <DependentUpon>201705141341533_APB.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705161339432_DKV.cs" />
+    <Compile Include="Migrations\201705161339432_DKV.Designer.cs">
+      <DependentUpon>201705161339432_DKV.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705161602196_PaymentMethod.cs" />
+    <Compile Include="Migrations\201705161602196_PaymentMethod.Designer.cs">
+      <DependentUpon>201705161602196_PaymentMethod.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705161645512_PhiHang.cs" />
+    <Compile Include="Migrations\201705161645512_PhiHang.Designer.cs">
+      <DependentUpon>201705161645512_PhiHang.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705161654547_PhiXuatVe.cs" />
+    <Compile Include="Migrations\201705161654547_PhiXuatVe.Designer.cs">
+      <DependentUpon>201705161654547_PhiXuatVe.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705161720401_PhiXuatVe1.cs" />
+    <Compile Include="Migrations\201705161720401_PhiXuatVe1.Designer.cs">
+      <DependentUpon>201705161720401_PhiXuatVe1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705171920204_Booking.cs" />
+    <Compile Include="Migrations\201705171920204_Booking.Designer.cs">
+      <DependentUpon>201705171920204_Booking.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705181648203_BW.cs" />
+    <Compile Include="Migrations\201705181648203_BW.Designer.cs">
+      <DependentUpon>201705181648203_BW.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AbayFlightScrape\AbayScrapeService.cs" />
+    <Compile Include="Models\AbayFlightScrape\AbaySearchFlightResult.cs" />
+    <Compile Include="Models\AbayFlightScrape\SearchItemResultInfo.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Article\Article.cs" />
+    <Compile Include="Models\BookApi\BookInfo.cs" />
+    <Compile Include="Models\BookApi\BookPaymentMethod.cs" />
     <Compile Include="Models\BookApi\BookResult.cs" />
+    <Compile Include="Models\BookApi\BookService.cs" />
+    <Compile Include="Models\BookApi\TicketInfo.cs" />
+    <Compile Include="Models\BookApi\TicketPassenger.cs" />
     <Compile Include="Models\EnvietFlightScrape\EvScrapeModel.cs" />
     <Compile Include="Models\EnvietFlightScrape\EvScrapeService.cs" />
     <Compile Include="Models\EnvietFlightScrape\SearchFlightInfo.cs" />
@@ -333,6 +370,8 @@
     <Compile Include="Models\General\GeneralInformation.cs" />
     <Compile Include="Models\General\GeneralService.cs" />
     <Compile Include="Models\PageRole.cs" />
+    <Compile Include="Models\PaymentMethod\PaymentMethod.cs" />
+    <Compile Include="Models\PaymentMethod\PaymentMethodService.cs" />
     <Compile Include="Models\Province\Province.cs" />
     <Compile Include="Models\Province\ProvinceService.cs" />
     <Compile Include="Models\ArticleTypes\ArticleType.cs" />
@@ -341,7 +380,6 @@
     <Compile Include="Models\Article\ArticleService.cs" />
     <Compile Include="Models\BaseService.cs" />
     <Compile Include="Models\BookApi\AirlineBrand.cs" />
-    <Compile Include="Models\BookApi\FlightBookService.cs" />
     <Compile Include="Models\BookApi\ApiConfig.cs" />
     <Compile Include="Models\BookApi\ApiConfigService.cs" />
     <Compile Include="Models\BookApi\BookingDTO.cs" />
@@ -368,10 +406,10 @@
     <Compile Include="Models\Roles\RoleDTO.cs" />
     <Compile Include="Models\Roles\RoleService.cs" />
     <Compile Include="Models\Extentions.cs" />
+    <Compile Include="Models\TienIch.cs" />
     <Compile Include="Models\Users\UserDTO.cs" />
     <Compile Include="Models\Users\UserService.cs" />
     <Compile Include="Models\WebConfig\WebConfig.cs" />
-    <Compile Include="Models\WebConfig\WebConfigDTO.cs" />
     <Compile Include="Models\WebConfig\WebConfigService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
@@ -507,6 +545,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705141341533_APB.resx">
       <DependentUpon>201705141341533_APB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705161339432_DKV.resx">
+      <DependentUpon>201705161339432_DKV.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705161602196_PaymentMethod.resx">
+      <DependentUpon>201705161602196_PaymentMethod.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705161645512_PhiHang.resx">
+      <DependentUpon>201705161645512_PhiHang.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705161654547_PhiXuatVe.resx">
+      <DependentUpon>201705161654547_PhiXuatVe.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705161720401_PhiXuatVe1.resx">
+      <DependentUpon>201705161720401_PhiXuatVe1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705171920204_Booking.resx">
+      <DependentUpon>201705171920204_Booking.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705181648203_BW.resx">
+      <DependentUpon>201705181648203_BW.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

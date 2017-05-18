@@ -20,6 +20,10 @@ namespace WebEnvang.Models.WebConfig
             this.Province = data.Province;
             this.City = data.City;
             this.Address = data.Address;
+            this.AdultFee = data.AdultFee;
+            this.ChildFee = data.ChildFee;
+            this.InfantFee = data.InfantFee;
+            this.KetQuaDatVe = data.KetQuaDatVe;
         }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -32,5 +36,9 @@ namespace WebEnvang.Models.WebConfig
         public string Province { get; set; }
         public string City { get; set; }
         public string Address { get; set; }
+        public decimal AdultFee { get; set; }
+        public decimal ChildFee { get; set; }
+        public decimal InfantFee { get; set; }
+        public string KetQuaDatVe { get; set; }
     }
 }

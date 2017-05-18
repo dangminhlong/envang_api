@@ -18,7 +18,7 @@ namespace WebEnvang.Models.Location
         {
             var query = (from l in ctx.Locations
                          join r in ctx.Regions on l.RegionId equals r.Id
-                         where l.RegionId == dto.RegionId
+                         where l.RegionId == dto.RegionId || dto.RegionId == 0
                          select new
                          {
                              Id = l.Id,
@@ -57,7 +57,6 @@ namespace WebEnvang.Models.Location
         public async Task<dynamic> GetListDestLocationAndGroup(int sourceId)
         {
             var query = (from r in ctx.Regions
-                         where r.Id != sourceId
                          select new
                          {
                              RegionId = r.Id,
@@ -65,7 +64,7 @@ namespace WebEnvang.Models.Location
                              RegionOrder = r.Order,
                              RegionName = r.Name,
                              LocationList = (from l in ctx.Locations
-                                             where l.RegionId == r.Id
+                                             where l.RegionId == r.Id && l.Id != sourceId
                                              let isRouted = (from fr in ctx.FlightRoutes
                                                              where fr.SrcLocationId == sourceId && fr.DestLocationId == l.Id
                                                              select fr).Any()
@@ -83,7 +82,6 @@ namespace WebEnvang.Models.Location
         public async Task<dynamic> GetListDestLocationRoutedAndGroup(int sourceId)
         {
             var query = (from r in ctx.Regions
-                         where r.Id != sourceId
                          select new
                          {
                              RegionId = r.Id,
@@ -92,7 +90,7 @@ namespace WebEnvang.Models.Location
                              RegionName = r.Name,
                              LocationList = (from l in ctx.Locations
                                              let isRouted = (from fr in ctx.FlightRoutes
-                                                             where fr.SrcLocationId == sourceId && fr.DestLocationId == l.Id
+                                                             where fr.SrcLocationId == sourceId && fr.DestLocationId == l.Id && l.Id != sourceId
                                                              select fr).Any()
                                              where l.RegionId == r.Id && isRouted == true                                             
                                              select new

@@ -19,6 +19,7 @@ namespace WebEnvang.Models.BookApi
         public IList<Passenger> Infant { get; set; }
         public BookingFlightInfo ChieuDi { get; set; }
         public BookingFlightInfo ChieuVe { get; set; }
+        public BookPaymentMethod PaymentMethod { get; set; }
         public Contact Contact { get; set; }
         public decimal TotalPrice { get; set; }
         public string CouponCode { get; set; }

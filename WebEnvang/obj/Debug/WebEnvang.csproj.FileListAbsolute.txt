@@ -284,3 +284,10 @@ E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.AT.resources
 E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.A.resources
 E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.FAC.resources
 E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.APB.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.DKV.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.PaymentMethod.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.PhiHang.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.PhiXuatVe.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.PhiXuatVe1.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.Booking.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.BW.resources

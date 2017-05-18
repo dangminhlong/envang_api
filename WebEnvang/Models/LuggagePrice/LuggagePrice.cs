@@ -29,5 +29,8 @@ namespace WebEnvang.Models.LuggagePrice
         public bool IsDeleted { get; set; }
         public string UserId { get; set; }
         public string IP { get; set; }
+
+        [NotMapped]
+        public string AirlineCode { get; set; }
     }
 }

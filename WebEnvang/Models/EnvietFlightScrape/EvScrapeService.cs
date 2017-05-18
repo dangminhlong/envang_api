@@ -34,9 +34,9 @@ namespace WebEnvang.Models.EnvietFlightScrape
             List<SearchFlightInfo> returnList = new List<SearchFlightInfo>();
             if (genResponse.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                var taskJS = SearchFlightByBrand("JETSTAR", this.adultFee, this.childFee, this.infantFee, client, adult, child, infant);
-                var taskVJ = SearchFlightByBrand("VIETJET", this.adultFee, this.childFee, this.infantFee, client, adult, child, infant);
-                var taskVN = SearchFlightByBrand("VNA", this.adultFee, this.childFee, this.infantFee, client, adult, child, infant);
+                var taskJS = SearchFlightByBrand("JETSTAR", client, adult, child, infant);
+                var taskVJ = SearchFlightByBrand("VIETJET", client, adult, child, infant);
+                var taskVN = SearchFlightByBrand("VNA", client, adult, child, infant);
                 var resultJS = await taskJS;
                 var resultVJ = await taskVJ;
                 var resultVN = await taskVN;
@@ -54,7 +54,7 @@ namespace WebEnvang.Models.EnvietFlightScrape
             };
         }
 
-        public async Task<SearchFlightResult> SearchFlightByBrand(string brand, decimal adultFee, decimal childFee, decimal infantFee, HttpClient client, int adult, int child, int infant)
+        public async Task<SearchFlightResult> SearchFlightByBrand(string brand, HttpClient client, int adult, int child, int infant)
         {
             IList<SearchFlightInfo> departureList = new List<SearchFlightInfo>();
             IList<SearchFlightInfo> returnList = new List<SearchFlightInfo>();

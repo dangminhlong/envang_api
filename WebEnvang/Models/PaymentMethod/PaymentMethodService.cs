@@ -1,53 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Threading.Tasks;
-using System.Data;
+using System.Web;
 
-namespace WebEnvang.Models.Airline
+namespace WebEnvang.Models.PaymentMethod
 {
-    public class AirlineService : BaseService
+    public class PaymentMethodService
     {
         private readonly ApplicationDbContext ctx = null;
-        public AirlineService()
+        public PaymentMethodService()
         {
             ctx = new ApplicationDbContext();
         }
-        public async Task<IList<Airline>> GetList()
+        public async Task<dynamic> GetList()
         {
-            return await (from e in ctx.Airlines
-                          where e.IsDeleted == false
+            return await (from e in ctx.PaymentMethods
                           select e).ToListTask();
         }
-        public async Task Save(Airline dto, string userId, string IP)
+        public async Task Save(PaymentMethod dto)
         {
-            var entry = await (from e in ctx.Airlines
+            var entry = await (from e in ctx.PaymentMethods
                                where e.Id == dto.Id
                                select e).FirstOrDefaultTask();
             if (entry == null)
             {
-                entry = new Airline();
-                ctx.Airlines.Add(entry);
+                entry = new PaymentMethod();
+                ctx.PaymentMethods.Add(entry);
             }
             entry.Copy(dto);
-            entry.UserId = userId;
-            entry.IP = IP;
             await ctx.SaveChangesAsync();
         }
-
-        public async Task Delete(Airline dto, string userId, string IP)
+        public async Task Delete(PaymentMethod dto)
         {
-            var entry = await (from e in ctx.Airlines
+            var entry = await (from e in ctx.PaymentMethods
                                where e.Id == dto.Id
                                select e).FirstOrDefaultTask();
             if (entry != null)
             {
-                entry.IsDeleted = true;
-                entry.UserId = userId;
-                entry.IP = IP;
+                ctx.PaymentMethods.Remove(entry);
                 await ctx.SaveChangesAsync();
             }
         }
+
     }
 }

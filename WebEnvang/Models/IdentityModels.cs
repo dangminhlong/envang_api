@@ -5,7 +5,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using WebEnvang.Models.General;
 using System.Data.Entity;
-
+using WebEnvang.Models.BookApi;
 
 namespace WebEnvang.Models
 {
@@ -49,5 +49,9 @@ namespace WebEnvang.Models
         public DbSet<Airline.Airline> Airlines { get; set; }
         public DbSet<LuggagePrice.LuggagePrice> LuggagePrices { get; set; }
         public DbSet<Province.Province> Provinces { get; set; }
+        public DbSet<PaymentMethod.PaymentMethod> PaymentMethods { get; set; }
+        public DbSet<BookInfo> BookInfos { get; set; }
+        public DbSet<TicketInfo> TicketInfos { get; set; }
+        public DbSet<TicketPassenger> TicketPassengers { get; set; }
     }
 }

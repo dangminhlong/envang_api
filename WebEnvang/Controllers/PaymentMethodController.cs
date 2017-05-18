@@ -6,39 +6,30 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using WebEnvang.Models.LuggagePrice;
+using WebEnvang.Models.PaymentMethod;
 
 namespace WebEnvang.Controllers
 {
     [Authorize(Roles = "System,Admin")]
-    public class LuggagePriceController : ApiController
+    public class PaymentMethodController : ApiController
     {
-        private LuggagePriceService LuggagePriceService;
-        public LuggagePriceController()
+        private PaymentMethodService PaymentMethodService;
+        public PaymentMethodController()
         {
-            this.LuggagePriceService = new LuggagePriceService();
+            this.PaymentMethodService = new PaymentMethodService();
         }
         [AllowAnonymous]
         [HttpPost]
-        public async Task<dynamic> GetList([FromBody]LuggagePrice dto)
+        public async Task<dynamic> GetList()
         {
-            return await LuggagePriceService.GetList(dto);
+            return await PaymentMethodService.GetList();
         }
-
-        [AllowAnonymous]
         [HttpPost]
-        public async Task<dynamic> GetListByAirlineCode([FromBody]LuggagePrice dto)
-        {
-            return await LuggagePriceService.GetListByAirlineCode(dto.AirlineCode);
-        }
-
-        [HttpPost]
-        public async Task<dynamic> Save([FromBody]LuggagePrice dto)
+        public async Task<dynamic> Save([FromBody]PaymentMethod dto)
         {
             try
             {
-                string userid = User.Identity.GetUserId();
-                await LuggagePriceService.Save(dto, userid, Request.GetOwinContext().Request.RemoteIpAddress);
+                await PaymentMethodService.Save(dto);
                 return new
                 {
                     success = true,
@@ -55,12 +46,11 @@ namespace WebEnvang.Controllers
             }
         }
         [HttpPost]
-        public async Task<dynamic> Remove([FromBody]LuggagePrice dto)
+        public async Task<dynamic> Remove([FromBody]PaymentMethod dto)
         {
             try
             {
-                string userid = User.Identity.GetUserId();
-                await LuggagePriceService.Delete(dto, userid, Request.GetOwinContext().Request.RemoteIpAddress);
+                await PaymentMethodService.Delete(dto);
                 return new
                 {
                     success = true,
