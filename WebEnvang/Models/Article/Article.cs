@@ -13,6 +13,7 @@ namespace WebEnvang.Models.Article
         public void Copy(ArticleDTO dto)
         {
             this.Name = dto.Name;
+            this.FriendlyName = dto.FriendlyName;
             this.Description = dto.Description;
             this.Content = dto.Content;
             this.ImageUrl = dto.ImageUrl;
@@ -22,6 +23,7 @@ namespace WebEnvang.Models.Article
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Name { get; set; }
+        public string FriendlyName { get; set; }
         public string Description { get; set; }
         public string Content { get; set; }
         public string ImageUrl { get; set; }

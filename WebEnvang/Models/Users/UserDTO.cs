@@ -16,5 +16,8 @@ namespace WebEnvang.Models.Users
         public string FullName { get; set; }
         public string Address { get; set; }
         public int SaveType { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
+        public string RouterPath { get; set; }
     }
 }

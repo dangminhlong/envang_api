@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -23,16 +24,41 @@ namespace WebEnvang.Models.AbayFlightScrape
         }
         public async Task<AbaySearchFlightResult> SearchFlight(bool roundTrip, string fromCity, string toCity, string fromDate, string toDate, int adult, int child, int infant)
         {
+            string requestIdUrl = "https://www.abay.vn/intro/?";
             string genUrl = "https://www.abay.vn/Abay/";
             WebRequestHandler handler = new WebRequestHandler()
             {
                 CookieContainer = new System.Net.CookieContainer()
             };
-            HttpClient client = new HttpClient(handler);
+            string certPath = HttpContext.Current.Server.MapPath("~/SSL/abay.cer");
+            X509Certificate cert = X509Certificate.CreateFromCertFile(certPath);
+            handler.ClientCertificates.Add(cert);
+            HttpClient client = new HttpClient(handler);            
+            client.DefaultRequestHeaders.Host = "www.abay.vn";
+            //client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            //client.DefaultRequestHeaders.Add("Cache-Control", "max-age=0");            
             client.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
             client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+            //client.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+            //client.DefaultRequestHeaders.Add("Referer", "https://www.abay.vn/Abay/");
+            //client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, sdch, br");
+            //client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.8");
+
+            //send first requeset
             var genResponse = await client.GetAsync(genUrl);
             var genResult = await genResponse.Content.ReadAsStringAsync();
+
+            //wait for 220 ms
+            await Task.Delay(220);
+
+            //get requestId to create cookie
+            var requestIdResponse = await client.GetAsync(requestIdUrl);
+            string requestId = await requestIdResponse.Content.ReadAsStringAsync();
+            client.DefaultRequestHeaders.Add("Cookie", "RequestId=" + requestId);
+
+            //resend request with cookie
+            genResponse = await client.GetAsync(genUrl);
+            genResult = await genResponse.Content.ReadAsStringAsync();
 
             string vsgPattern = "<input type=\"hidden\" name=\"__VIEWSTATEGENERATOR\" id=\"__VIEWSTATEGENERATOR\" value=\"(?<v>[^\"]+)\" />";
             string vsPattern = "<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"(?<v>[^\"]+)\" />";
@@ -91,69 +117,74 @@ namespace WebEnvang.Models.AbayFlightScrape
             }
             client.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
             client.DefaultRequestHeaders.Add("Referer", strReturnUri);
-            var result1 = await SearchAirline("VN,BL,VJ", sessionId, client);
-            string[] airlineList1 = (from inf in result1.DepartureList
-                                     select inf.Airline).Distinct().ToArray();
-            if (airlineList1.Length < listAirline.Count)
+            var linkSearchResult = await SearchLinks("VN,BL,VJ", sessionId, client);
+            
+            string[] airlineList1 = (from inf in linkSearchResult
+                                     select inf.AirlineCode).Distinct().ToArray();
+
+            //CHECK JETSTAR
+            if (!airlineList1.Contains("BL"))
             {
-                var result2 = await SearchAirline("BL,VJ", sessionId, client);
-                result2.DepartureList.ForEach(r =>
+                await Task.Delay(2000);
+                var linkSearchResult2 = await SearchLinks("BL,VJ", sessionId, client);
+                linkSearchResult2.ForEach(r =>
                 {
-                    var test = result1.DepartureList.Where(x => x.FlightNo == r.FlightNo && x.AirlineName == r.AirlineName).FirstOrDefault();
+                    var test = linkSearchResult.Where(x => x.Link == r.Link).FirstOrDefault();
                     if (test == null)
-                        result1.DepartureList.Add(r);
+                        linkSearchResult.Add(r);
                 });
-                result2.ReturnList.ForEach(r =>
+            }
+
+            //CHECK VIETJET
+            if (!airlineList1.Contains("VJ"))
+            {
+                await Task.Delay(2000);
+                var linkSearchResult2 = await SearchLinks("VJ,BL", sessionId, client);
+                linkSearchResult2.ForEach(r =>
                 {
-                    var test = result1.ReturnList.Where(x => x.FlightNo == r.FlightNo && x.AirlineName == r.AirlineName).FirstOrDefault();
+                    var test = linkSearchResult.Where(x => x.Link == r.Link).FirstOrDefault();
                     if (test == null)
-                        result1.ReturnList.Add(r);
+                        linkSearchResult.Add(r);
                 });
-                string[] airlineList2 = (from inf in result1.DepartureList
-                                         select inf.Airline).Distinct().ToArray();
-                if (airlineList2.Length < listAirline.Count)
-                {
-                    var result3 = await SearchAirline("BL", sessionId, client);
+            }
 
-                    result3.DepartureList.ForEach(r =>
-                    {
-                        var test = result1.DepartureList.Where(x => x.FlightNo == r.FlightNo && x.AirlineName == r.AirlineName).FirstOrDefault();
-                        if (test == null)
-                            result1.DepartureList.Add(r);
-                    });
-
-                    result3.ReturnList.ForEach(r =>
-                    {
-                        var test = result1.ReturnList.Where(x => x.FlightNo == r.FlightNo && x.AirlineName == r.AirlineName).FirstOrDefault();
-                        if (test == null)
-                            result1.ReturnList.Add(r);
-                    });
-                }
-            }            
+            var result1 = await SearchDetails(linkSearchResult, client);
             return result1;
         }
 
-        public async Task<AbaySearchFlightResult> SearchAirline(string airline, string sessionId, HttpClient client)
+        public async Task<List<AbaySearchLink>> SearchLinks(string airline, string sessionId, HttpClient client)
         {
             string searchAirlineUri = string.Format("https://www.abay.vn/Abay/Domestic/AjaxGetResultDomestic.aspx?sessionId={0}&airlines={1}", sessionId, airline);
             var searchAirlineResponse = await client.GetAsync(searchAirlineUri);
             var searchAirlineResult = await searchAirlineResponse.Content.ReadAsStringAsync();
-
-            string searchDetailPattern = "<a giatri='(?<v>[^']+)'";
+            searchAirlineResult = Regex.Replace(searchAirlineResult, "[\n\r\t]+", "");
+            searchAirlineResult = Regex.Replace(searchAirlineResult, "[ ]+", " ");
+            searchAirlineResult = Regex.Replace(searchAirlineResult, "\"", "\'");
+            string searchDetailPattern = "<td class='begin'><img class='airlogo' alt='(?<hang>[A-Z]+)' /></td> <td>([^<]+)</td> <td class='f-time'>([^<]+)</td> <td style='display:none'>([^<]+)</td> <td class='f-price'>([^<]+)</td> <td class='v-detail' style='padding-left:30px;display:'><a giatri='(?<link>[^']+)' class='linkViewFlightDetail'>";
             Match match = Regex.Match(searchAirlineResult, searchDetailPattern);
-            IList<string> detailLinkList = new List<string>();
+            List<AbaySearchLink> list = new List<AbaySearchLink>();
             while (match.Success)
             {
-                var link = match.Groups["v"].Value;
-                detailLinkList.Add(link);
+                string hang = match.Groups["hang"].Value;
+                string link = match.Groups["link"].Value;
+                list.Add(new AbaySearchLink
+                {
+                    AirlineCode = hang,
+                    Link = link
+                });
                 match = match.NextMatch();
             }
+            return list;
+        }
+
+        public async Task<AbaySearchFlightResult> SearchDetails(List<AbaySearchLink> list, HttpClient client)
+        {
             List<SearchItemResultInfo> departureList = new List<SearchItemResultInfo>();
             List<SearchItemResultInfo> returnList = new List<SearchItemResultInfo>();
             
-            foreach (string link in detailLinkList)
+            foreach (var linkItem in list)
             {
-                string fullLink = "https://www.abay.vn" + link;
+                string fullLink = "https://www.abay.vn" + linkItem.Link;
                 var searchDetailResponse = await client.GetAsync(fullLink);
                 var searchDetailResult = await searchDetailResponse.Content.ReadAsStringAsync();
                 searchDetailResult = Regex.Replace(searchDetailResult, "[\n\r\t]+", "");

@@ -291,3 +291,9 @@ E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.PhiXuatVe.reso
 E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.PhiXuatVe1.resources
 E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.Booking.resources
 E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.BW.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.Something.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.NgayTT.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.BookTotalPrice.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.FriendlyName.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.DaThanhToan.resources
+E:\programing\envang_api\WebEnvang\obj\Debug\WebEnvang.Migrations.ThongTinKhac.resources

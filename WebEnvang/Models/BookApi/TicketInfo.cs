@@ -41,15 +41,18 @@ namespace WebEnvang.Models.BookApi
         public string ReturnArrivalTime { get; set; }
         public string GhiChu { get; set; }
         public string PNRCode { get; set; }
-        public int TinhTrang { get; set; } //0:Dat,1:Xuat,2:Huy,3:Hoan
+        public int TinhTrang { get; set; } //0:Chua Dat,1:Da Dat,2:Da Xuat, 3:Huy
+        public bool DaThanhToan { get; set; }
         public string NguoiDat { get; set; }
-        public DateTime NgayDat { get; set; }
+        public DateTime? NgayDat { get; set; }
         public string NguoiXuat { get; set; }
         public DateTime? NgayXuat { get; set; }
         public string NguoiHuy { get; set; }
         public DateTime? NgayHuy { get; set; }
         public string NguoiHoan { get; set; }
         public DateTime? NgayHoan { get; set; }
+        public string NguoiThanhToan { get; set; }
+        public DateTime? NgayThanhToan { get; set; }
 
         public virtual ICollection<TicketPassenger> Passengers { get; set; }
         public virtual BookInfo BookInfo { get; set; }

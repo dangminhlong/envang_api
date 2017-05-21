@@ -256,5 +256,15 @@ namespace WebEnvang.Controllers
                 return new { success = false, message = "Lỗi hệ thống" };
             }
         }
+
+        [HttpPost]
+        public async Task<dynamic> CheckPageByUser([FromBody]UserDTO dto)
+        {
+            var userId = User.Identity.GetUserId();
+            return new
+            {
+                HasPermission = await UserService.CheckPageByUser(dto.RouterPath, userId)
+            };
+        }
     }
 }

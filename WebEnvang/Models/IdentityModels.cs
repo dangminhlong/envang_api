@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity.Owin;
 using WebEnvang.Models.General;
 using System.Data.Entity;
 using WebEnvang.Models.BookApi;
+using WebEnvang.Models.Users;
 
 namespace WebEnvang.Models
 {
@@ -53,5 +54,6 @@ namespace WebEnvang.Models
         public DbSet<BookInfo> BookInfos { get; set; }
         public DbSet<TicketInfo> TicketInfos { get; set; }
         public DbSet<TicketPassenger> TicketPassengers { get; set; }
+        //public DbSet<AspNetUserRole> AspNetUserRoles { get; set; }
     }
 }

@@ -17,10 +17,10 @@ namespace WebEnvang.Models.Article
         public async Task<dynamic> GetList(ArticleDTO dto)
         {
             var tong = (from e in ctx.Articles
-                         where e.ArticleTypeId == dto.ArticleTypeId
+                         where (e.ArticleTypeId == dto.ArticleTypeId || dto.ArticleTypeId == 0)
                          select e).Count();
             var query = (from e in ctx.Articles
-                         where e.ArticleTypeId == dto.ArticleTypeId
+                         where (e.ArticleTypeId == dto.ArticleTypeId || dto.ArticleTypeId == 0)
                          orderby e.CreatedOn descending
                          select e).Skip((dto.Page - 1) * dto.PageSize).Take(dto.PageSize);
             return new
@@ -57,6 +57,15 @@ namespace WebEnvang.Models.Article
                 Data = await query.ToListTask(),
                 TotalItems = tong
             };            
+        }
+
+        public async Task<dynamic> GetHomeList()
+        {
+            var query = (from e in ctx.Articles
+                         where !string.IsNullOrEmpty(e.ImageUrl)
+                         orderby e.CreatedOn descending
+                         select e).Take(5);
+            return await query.ToListTask();
         }
 
         public async Task Save(ArticleDTO dto, string userId, string IP)

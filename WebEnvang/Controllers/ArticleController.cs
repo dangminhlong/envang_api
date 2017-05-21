@@ -44,6 +44,12 @@ namespace WebEnvang.Controllers
         {
             return await ArticleService.GetListView(dto.Page, dto.PageSize);
         }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<dynamic> GetHomeList()
+        {
+            return await ArticleService.GetHomeList();
+        }
 
         [HttpPost]
         public async Task<dynamic> Save([FromBody]ArticleDTO dto)

@@ -24,6 +24,9 @@ namespace WebEnvang.Models.BookApi
         public decimal TotalPrice { get; set; }
         public string CouponCode { get; set; }
         public string CouponDiscount { get; set; }
+        public bool XuatHoaDon { get; set; }
+        public string ThongTinXuatHoaDon { get; set; }
+        public string SoDienThoaiNguoiGioiThieu { get; set; }
 
     }
 }

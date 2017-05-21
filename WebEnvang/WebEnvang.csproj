@@ -271,6 +271,7 @@
     <Compile Include="Controllers\FeatureArticleConfigGroupController.cs" />
     <Compile Include="Controllers\AirlineController.cs" />
     <Compile Include="Controllers\LuggagePriceController.cs" />
+    <Compile Include="Controllers\QlDonHangController.cs" />
     <Compile Include="Controllers\RegionController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -347,9 +348,34 @@
     <Compile Include="Migrations\201705181648203_BW.Designer.cs">
       <DependentUpon>201705181648203_BW.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705200748599_Something.cs" />
+    <Compile Include="Migrations\201705200748599_Something.Designer.cs">
+      <DependentUpon>201705200748599_Something.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705200814415_NgayTT.cs" />
+    <Compile Include="Migrations\201705200814415_NgayTT.Designer.cs">
+      <DependentUpon>201705200814415_NgayTT.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705200954261_BookTotalPrice.cs" />
+    <Compile Include="Migrations\201705200954261_BookTotalPrice.Designer.cs">
+      <DependentUpon>201705200954261_BookTotalPrice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705210405110_FriendlyName.cs" />
+    <Compile Include="Migrations\201705210405110_FriendlyName.Designer.cs">
+      <DependentUpon>201705210405110_FriendlyName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705210515229_DaThanhToan.cs" />
+    <Compile Include="Migrations\201705210515229_DaThanhToan.Designer.cs">
+      <DependentUpon>201705210515229_DaThanhToan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705210932369_ThongTinKhac.cs" />
+    <Compile Include="Migrations\201705210932369_ThongTinKhac.Designer.cs">
+      <DependentUpon>201705210932369_ThongTinKhac.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AbayFlightScrape\AbayScrapeService.cs" />
     <Compile Include="Models\AbayFlightScrape\AbaySearchFlightResult.cs" />
+    <Compile Include="Models\AbayFlightScrape\AbaySearchLink.cs" />
     <Compile Include="Models\AbayFlightScrape\SearchItemResultInfo.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -401,6 +427,8 @@
     <Compile Include="Models\Airline\AirlineService.cs" />
     <Compile Include="Models\LuggagePrice\LuggagePrice.cs" />
     <Compile Include="Models\LuggagePrice\LuggagePriceService.cs" />
+    <Compile Include="Models\QlDonHang\QlDonHangDTO.cs" />
+    <Compile Include="Models\QlDonHang\QlDonHangService.cs" />
     <Compile Include="Models\Region\Region.cs" />
     <Compile Include="Models\Region\RegionService.cs" />
     <Compile Include="Models\Roles\RoleDTO.cs" />
@@ -451,6 +479,7 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="SSL\abay.cer" />
     <None Include="_bin_deployableAssemblies\x86\sqlcese40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceqp40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceme40.dll" />
@@ -566,6 +595,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705181648203_BW.resx">
       <DependentUpon>201705181648203_BW.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705200748599_Something.resx">
+      <DependentUpon>201705200748599_Something.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705200814415_NgayTT.resx">
+      <DependentUpon>201705200814415_NgayTT.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705200954261_BookTotalPrice.resx">
+      <DependentUpon>201705200954261_BookTotalPrice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705210405110_FriendlyName.resx">
+      <DependentUpon>201705210405110_FriendlyName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705210515229_DaThanhToan.resx">
+      <DependentUpon>201705210515229_DaThanhToan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705210932369_ThongTinKhac.resx">
+      <DependentUpon>201705210932369_ThongTinKhac.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

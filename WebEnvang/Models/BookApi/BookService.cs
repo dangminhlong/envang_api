@@ -23,6 +23,7 @@ namespace WebEnvang.Models.BookApi
                 ToPlaceCode = dto.ToPlaceCode,
                 FromPlaceId = dto.FromPlaceId,
                 ToPlaceId = dto.ToPlaceId,
+                TotalPrice = dto.TotalPrice,
                 DepartDate = dto.DepartDate,
                 ReturnDate = dto.ReturnDate,
                 LienHeHoTen = dto.Contact.HoTen,
@@ -31,38 +32,15 @@ namespace WebEnvang.Models.BookApi
                 LienHeEmail = dto.Contact.Email,
                 PaymentMethodId = dto.PaymentMethod.Id,
                 PaymentMethodMessage = dto.PaymentMethod.CustomerResponse,
+                XuatHoaDon = dto.XuatHoaDon,
+                ThongTinXuatHoaDon = dto.ThongTinXuatHoaDon,
+                SoDienThoaiNguoiGioiThieu = dto.SoDienThoaiNguoiGioiThieu,
                 TinhTrang = 0,
                 NgayDat = DateTime.Now,
                 NguoiDat = userId,
                 IP = Ip                
             };
-            
-
-            var adults = (from a in dto.Adult
-                          select new TicketPassenger
-                          {
-                              Type = 0,
-                              FullName = a.FullName,
-                              Title = a.Title,
-                              Baggage = a.Baggage,
-                              ReturnBaggage = a.ReturnBaggage
-                          }).ToList();
-            var childs = (from a in dto.Child
-                          select new TicketPassenger
-                          {
-                              Type = 1,
-                              FullName = a.FullName,
-                              Title = a.Title,
-                              Baggage = a.Baggage,
-                              ReturnBaggage = a.ReturnBaggage
-                          }).ToList();
-            var infants = (from a in dto.Infant
-                          select new TicketPassenger
-                          {
-                              Type = 2,
-                              FullName = a.FullName,
-                              Title = a.Title
-                          }).ToList();
+                        
             if (dto.RoundTrip && dto.ChieuDi.Airline == dto.ChieuVe.Airline)
             {
                 var ticket = new TicketInfo()
@@ -79,8 +57,6 @@ namespace WebEnvang.Models.BookApi
                     ArrivalTime = dto.ChieuDi.ArrivalTime,
                     FromCityCode = dto.FromPlaceCode,
                     ToCityCode = dto.ToPlaceCode,
-                    NgayDat = DateTime.Now,
-                    NguoiDat = userId,
                     ReturnArrivalDate = dto.ChieuVe.ArrivalDate,
                     ReturnArrivalTime = dto.ChieuVe.ArrivalTime,
                     ReturnDepartureDate = dto.ChieuVe.DepartureDate,
@@ -91,6 +67,31 @@ namespace WebEnvang.Models.BookApi
                     ReturnTicketType = dto.ChieuVe.TicketType,
                     TinhTrang = 0
                 };
+                var adults = (from a in dto.Adult
+                              select new TicketPassenger
+                              {
+                                  Type = 0,
+                                  FullName = a.FullName,
+                                  Title = a.Title,
+                                  Baggage = a.Baggage,
+                                  ReturnBaggage = a.ReturnBaggage
+                              }).ToList();
+                var childs = (from a in dto.Child
+                              select new TicketPassenger
+                              {
+                                  Type = 1,
+                                  FullName = a.FullName,
+                                  Title = a.Title,
+                                  Baggage = a.Baggage,
+                                  ReturnBaggage = a.ReturnBaggage
+                              }).ToList();
+                var infants = (from a in dto.Infant
+                               select new TicketPassenger
+                               {
+                                   Type = 2,
+                                   FullName = a.FullName,
+                                   Title = a.Title
+                               }).ToList();
                 adults.ForEach(p => { ticket.Passengers.Add(p); });
                 childs.ForEach(p => { ticket.Passengers.Add(p); });
                 infants.ForEach(p => { ticket.Passengers.Add(p); });
@@ -98,31 +99,81 @@ namespace WebEnvang.Models.BookApi
             }
             else
             {
-                var ticket1 = new TicketInfo()
                 {
-                    Airline = dto.ChieuDi.Airline,
-                    IsRoundTrip = false,
-                    FlightNo = dto.ChieuDi.FlightNo,
-                    TicketFare = dto.ChieuDi.TicketFare,
-                    TicketPrice = dto.ChieuDi.TicketPrice,
-                    TicketType = dto.ChieuDi.TicketType,
-                    DepartureTime = dto.ChieuDi.DepartureTime,
-                    DepartureDate = dto.ChieuDi.DepartureDate,
-                    ArrivalDate = dto.ChieuDi.ArrivalDate,
-                    ArrivalTime = dto.ChieuDi.ArrivalTime,
-                    FromCityCode = dto.FromPlaceCode,
-                    ToCityCode = dto.ToPlaceCode,
-                    NgayDat = DateTime.Now,
-                    NguoiDat = userId,
-                    TinhTrang = 0
-                };
+                    var adults = (from a in dto.Adult
+                                  select new TicketPassenger
+                                  {
+                                      Type = 0,
+                                      FullName = a.FullName,
+                                      Title = a.Title,
+                                      Baggage = a.Baggage,
+                                      ReturnBaggage = a.ReturnBaggage
+                                  }).ToList();
+                    var childs = (from a in dto.Child
+                                  select new TicketPassenger
+                                  {
+                                      Type = 1,
+                                      FullName = a.FullName,
+                                      Title = a.Title,
+                                      Baggage = a.Baggage,
+                                      ReturnBaggage = a.ReturnBaggage
+                                  }).ToList();
+                    var infants = (from a in dto.Infant
+                                   select new TicketPassenger
+                                   {
+                                       Type = 2,
+                                       FullName = a.FullName,
+                                       Title = a.Title
+                                   }).ToList();
+                    var ticket1 = new TicketInfo()
+                    {
+                        Airline = dto.ChieuDi.Airline,
+                        IsRoundTrip = false,
+                        FlightNo = dto.ChieuDi.FlightNo,
+                        TicketFare = dto.ChieuDi.TicketFare,
+                        TicketPrice = dto.ChieuDi.TicketPrice,
+                        TicketType = dto.ChieuDi.TicketType,
+                        DepartureTime = dto.ChieuDi.DepartureTime,
+                        DepartureDate = dto.ChieuDi.DepartureDate,
+                        ArrivalDate = dto.ChieuDi.ArrivalDate,
+                        ArrivalTime = dto.ChieuDi.ArrivalTime,
+                        FromCityCode = dto.FromPlaceCode,
+                        ToCityCode = dto.ToPlaceCode,
+                        TinhTrang = 0
+                    };
 
-                adults.ForEach(p => { ticket1.Passengers.Add(p); });
-                childs.ForEach(p => { ticket1.Passengers.Add(p); });
-                infants.ForEach(p => { ticket1.Passengers.Add(p); });
-                bookInfo.Tickets.Add(ticket1);
+                    adults.ForEach(p => { ticket1.Passengers.Add(p); });
+                    childs.ForEach(p => { ticket1.Passengers.Add(p); });
+                    infants.ForEach(p => { ticket1.Passengers.Add(p); });
+                    bookInfo.Tickets.Add(ticket1);
+                }
                 if (dto.RoundTrip)
                 {
+                    var adults = (from a in dto.Adult
+                                  select new TicketPassenger
+                                  {
+                                      Type = 0,
+                                      FullName = a.FullName,
+                                      Title = a.Title,
+                                      Baggage = a.Baggage,
+                                      ReturnBaggage = a.ReturnBaggage
+                                  }).ToList();
+                    var childs = (from a in dto.Child
+                                  select new TicketPassenger
+                                  {
+                                      Type = 1,
+                                      FullName = a.FullName,
+                                      Title = a.Title,
+                                      Baggage = a.Baggage,
+                                      ReturnBaggage = a.ReturnBaggage
+                                  }).ToList();
+                    var infants = (from a in dto.Infant
+                                   select new TicketPassenger
+                                   {
+                                       Type = 2,
+                                       FullName = a.FullName,
+                                       Title = a.Title
+                                   }).ToList();
                     var ticket2 = new TicketInfo()
                     {
                         Airline = dto.ChieuVe.Airline,
@@ -137,8 +188,6 @@ namespace WebEnvang.Models.BookApi
                         ArrivalTime = dto.ChieuVe.ArrivalTime,
                         FromCityCode = dto.ToPlaceCode,
                         ToCityCode = dto.FromPlaceCode,
-                        NgayDat = DateTime.Now,
-                        NguoiDat = userId,
                         TinhTrang = 0
                     };
                     adults.ForEach(p => { ticket2.Passengers.Add(p); });

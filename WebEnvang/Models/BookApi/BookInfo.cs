@@ -25,6 +25,7 @@ namespace WebEnvang.Models.BookApi
         public int ToPlaceId { get; set; }
         public string DepartDate { get; set; }
         public string ReturnDate { get; set; }
+        public decimal TotalPrice { get; set; }
         public string LienHeHoTen { get; set; }
         public string LienHeDienThoai { get; set; }
         public string LienHeEmail { get; set; }
@@ -34,11 +35,15 @@ namespace WebEnvang.Models.BookApi
         public DateTime NgayDat { get; set; }
         public string NguoiDat { get; set; }
         public string IP { get; set; }
-        public int TinhTrang { get; set; } //0: Dat, 1:XuLy, 2:Huy
+        public int TinhTrang { get; set; } //0: Dat, 1:XuLy, 3:Huy
         public string NguoiXuLy { get; set; }
         public DateTime? NgayXuLy { get; set; }
         public string NguoiHuy { get; set; }
         public DateTime? NgayHuy { get; set; }
+
+        public bool XuatHoaDon { get; set; }
+        public string ThongTinXuatHoaDon { get; set; }
+        public string SoDienThoaiNguoiGioiThieu { get; set; }
 
         public virtual ICollection<TicketInfo> Tickets { get; set; }
     }
